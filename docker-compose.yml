@@ -1,0 +1,5 @@
+server:
+  image: willko/go-echo-server-demo:latest
+  ports:
+    - 7447:7447
+
