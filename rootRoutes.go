@@ -13,9 +13,7 @@ type rootRoutes struct {
 
 // mappings
 func (r rootRoutes) init() {
-	// avoid double forward slash in url
-	// (maybe ignore this in route proxy methods)
-	r.get("", r.getRoot)
+	r.get("/", r.getRoot)
 }
 
 // handlers
