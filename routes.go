@@ -20,6 +20,7 @@ func mountRoutes(r someRoutes) {
 type route struct {
 	base string
 	echo *echo.Echo
+	db   *DB
 }
 
 func slashJoin(s1 string, s2 string) string {

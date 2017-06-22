@@ -2,4 +2,13 @@ server:
   image: willko/go-echo-server-demo:latest
   ports:
     - 7447:7447
-
+  links:
+    - db
+db:
+  environment:
+    - POSTGRES_DB=postgres
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_USER=postgres
+  image: 'postgres:9.6'
+  ports:
+    - '5432:5432'

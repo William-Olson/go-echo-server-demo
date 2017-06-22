@@ -5,7 +5,10 @@ WORKDIR /go/src/server
 COPY . /go/src/server
 
 RUN go-wrapper download -u github.com/labstack/echo/... && \
-  go-wrapper install .
+  go-wrapper download -u github.com/lib/pq && \
+  go-wrapper download -u github.com/jinzhu/gorm
+
+RUN go-wrapper install .
 
 EXPOSE 7447
 

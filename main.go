@@ -4,15 +4,14 @@ import (
 	"github.com/labstack/echo"
 )
 
-// ------------------------------------------------------
-
 func main() {
 	e := echo.New()
 
-	mountRoutes(rootRoutes{route{"/", e}})
-	mountRoutes(userRoutes{route{"/users", e}})
-	// users := userRoutes{route{"/users", e}}
-	// mountRoutes(users)
+	db := DB{}
+	db.init()
+
+	mountRoutes(rootRoutes{route{"/", e, &db}})
+	mountRoutes(userRoutes{route{"/users", e, &db}})
 
 	e.Logger.Fatal(e.Start(":7447"))
 }
