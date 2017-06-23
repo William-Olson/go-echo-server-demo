@@ -15,7 +15,7 @@ type userRoutes struct {
 func (ur userRoutes) init() {
 	ur.get("/:id/details", ur.getRoot)
 	ur.get("/:id", ur.userByIdRoute)
-	ur.post("/:id", ur.createUser)
+	ur.post("/", ur.createUser)
 }
 
 // handlers
@@ -33,7 +33,7 @@ func (u userRoutes) createUser(c echo.Context) error {
 	first := c.FormValue("first")
 	last := c.FormValue("last")
 
-	u.db.users.create(first, last)
+	users.create(first, last)
 
 	return c.String(200, "Ok")
 }

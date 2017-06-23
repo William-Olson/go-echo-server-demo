@@ -24,29 +24,35 @@ type DB struct {
 	users *Users
 }
 
-func (dB DB) init() {
+const (
+	dbDriver = "postgres"
+	dbOpts   = "host=db user=postgres dbname=postgres sslmode=disable password=postgres"
+)
 
-	driver := "postgres"
-	opts := "host=db user=postgres dbname=postgres sslmode=disable password=postgres"
+var users = &Users{}
+var db *gorm.DB
+
+func (dB DB) connect() *gorm.DB {
 
 	// TODO: add retry logic for db connection
 
 	// attempt connection
-	db, err := gorm.Open(driver, opts)
+	db, err := gorm.Open(dbDriver, dbOpts)
 
 	// shut down on errors
 	if err != nil {
 		panic("failed to connect database")
 	}
-	defer db.Close()
+
+	err = db.DB().Ping()
+	if err != nil {
+		panic(err)
+	}
 
 	// attach db and models to struct
 	dB.db = db
-	dB.users = &Users{db: db}
+	users.db = db
+	dB.users = users
 
-	// sync schema
-	db.AutoMigrate(&User{})
-
-	// test data creation
-	dB.users.create("admin", "admin")
+	return db
 }
