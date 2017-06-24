@@ -29,10 +29,10 @@ const (
 	dbOpts   = "host=db user=postgres dbname=postgres sslmode=disable password=postgres"
 )
 
-var users = &Users{}
-var db *gorm.DB
+func (dB *DB) connect() {
 
-func (dB DB) connect() *gorm.DB {
+	db := new(gorm.DB)
+	users := new(Users)
 
 	// TODO: add retry logic for db connection
 
@@ -53,6 +53,4 @@ func (dB DB) connect() *gorm.DB {
 	dB.db = db
 	users.db = db
 	dB.users = users
-
-	return db
 }

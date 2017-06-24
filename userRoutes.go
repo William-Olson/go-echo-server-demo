@@ -33,7 +33,7 @@ func (u userRoutes) createUser(c echo.Context) error {
 	first := c.FormValue("first")
 	last := c.FormValue("last")
 
-	users.create(first, last)
+	u.db.users.create(first, last)
 
 	return c.String(200, "Ok")
 }
