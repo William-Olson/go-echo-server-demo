@@ -1,8 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"gopkg.in/matryer/try.v1"
+	"math"
+	"time"
 )
 
 type DB struct {
@@ -11,8 +15,10 @@ type DB struct {
 }
 
 const (
-	dbDriver = "postgres"
-	dbOpts   = "host=db user=postgres dbname=postgres sslmode=disable password=postgres"
+	dbDriver           = "postgres"
+	dbOpts             = "host=db user=postgres dbname=postgres sslmode=disable password=postgres"
+	DB_CONNECT_RETRIES = 10
+	RETRY_FACTOR       = 1.7
 )
 
 func (dB DB) sync() {
@@ -33,19 +39,35 @@ func (dB *DB) connect() {
 	db := new(gorm.DB)
 	users := new(Users)
 
-	// TODO: add retry logic for db connection
+	// retry connecting to database until threshold reached or successful connection
+	err := try.Do(func(attempt int) (bool, error) {
+		var err error
+		shouldRetry := attempt <= DB_CONNECT_RETRIES
+		timeout := time.Second * time.Duration(math.Pow(RETRY_FACTOR, float64(attempt)))
 
-	// attempt connection
-	db, err := gorm.Open(dbDriver, dbOpts)
+		// connect
+		fmt.Printf("db connection attempt: %v\n", attempt)
+		db, err = gorm.Open(dbDriver, dbOpts)
 
-	// shut down on errors
+		// connect err
+		if err != nil {
+			time.Sleep(timeout)
+			return shouldRetry, err
+		}
+
+		// ping err
+		err = db.DB().Ping()
+		if err != nil {
+			time.Sleep(timeout)
+		}
+
+		return shouldRetry, err
+	})
+
+	// fail on exhausted retries
 	if err != nil {
-		panic("failed to connect database")
-	}
-
-	err = db.DB().Ping()
-	if err != nil {
-		panic(err)
+		fmt.Printf("%v\n", err)
+		panic("Could not connect to db")
 	}
 
 	// attach db and models to struct
