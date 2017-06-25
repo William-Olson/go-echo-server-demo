@@ -5,29 +5,28 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-type User struct {
-	gorm.Model
-	First string `gorm:"text"`
-	Last  string `gorm:"text"`
-}
-
-type Users struct {
-	db *gorm.DB
-}
-
-func (u Users) create(f string, l string) {
-	u.db.Create(&User{First: f, Last: l})
-}
-
 type DB struct {
-	db    *gorm.DB
-	users *Users
+	client *gorm.DB
+	users  *Users
 }
 
 const (
 	dbDriver = "postgres"
 	dbOpts   = "host=db user=postgres dbname=postgres sslmode=disable password=postgres"
 )
+
+func (dB DB) sync() {
+
+	// sync schema
+	dB.client.AutoMigrate(&User{})
+}
+
+func (dB DB) addTestData() {
+
+	// test data creation
+	dB.users.create("testFirst", "testLast")
+
+}
 
 func (dB *DB) connect() {
 
@@ -50,7 +49,7 @@ func (dB *DB) connect() {
 	}
 
 	// attach db and models to struct
-	dB.db = db
+	dB.client = db
 	users.db = db
 	dB.users = users
 }

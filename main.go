@@ -6,19 +6,17 @@ import (
 
 func main() {
 	e := echo.New()
+	db := DB{}
 
-	client := DB{}
-	client.connect()
+	// db setup
+	db.connect()
+	db.sync()
+	db.addTestData()
 
-	// sync schema
-	client.db.AutoMigrate(&User{})
-
-	// test data creation
-	client.users.create("admin", "admin")
-
-	mountRoutes(rootRoutes{route{"/", e, &client}})
-	mountRoutes(userRoutes{route{"/users", e, &client}})
+	// route setup
+	mountRoutes(rootRoutes{route{"/", e, &db}})
+	mountRoutes(userRoutes{route{"/users", e, &db}})
 
 	e.Logger.Fatal(e.Start(":7447"))
-	defer client.db.Close()
+	defer db.client.Close()
 }

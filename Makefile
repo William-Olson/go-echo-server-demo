@@ -8,4 +8,3 @@ kill:
 	docker-compose rm -f || true
 	docker-compose kill || true
 
-

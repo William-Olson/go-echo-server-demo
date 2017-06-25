@@ -2,11 +2,11 @@ FROM golang:1.8
 
 WORKDIR /go/src/server
 
-COPY . /go/src/server
-
 RUN go-wrapper download -u github.com/labstack/echo/... && \
   go-wrapper download -u github.com/lib/pq && \
   go-wrapper download -u github.com/jinzhu/gorm
+
+COPY . /go/src/server
 
 RUN go-wrapper install .
 
