@@ -9,11 +9,6 @@ import (
 	"time"
 )
 
-type DB struct {
-	client *gorm.DB
-	users  *Users
-}
-
 const (
 	dbDriver           = "postgres"
 	dbOpts             = "host=db user=postgres dbname=postgres sslmode=disable password=postgres"
@@ -21,10 +16,16 @@ const (
 	RETRY_FACTOR       = 1.7
 )
 
+type DB struct {
+	client *gorm.DB
+	users  *Users
+}
+
 func (dB DB) sync() {
 
 	// sync schema
 	dB.client.AutoMigrate(&User{})
+
 }
 
 func (dB DB) addTestData() {
@@ -36,11 +37,12 @@ func (dB DB) addTestData() {
 
 func (dB *DB) connect() {
 
-	db := new(gorm.DB)
-	users := new(Users)
+	var db *gorm.DB
 
-	// retry connecting to database until threshold reached or successful connection
+	// retry connecting to database until threshold reached or successful
+	// connection
 	err := try.Do(func(attempt int) (bool, error) {
+
 		var err error
 		shouldRetry := attempt <= DB_CONNECT_RETRIES
 		timeout := time.Second * time.Duration(math.Pow(RETRY_FACTOR, float64(attempt)))
@@ -62,6 +64,7 @@ func (dB *DB) connect() {
 		}
 
 		return shouldRetry, err
+
 	})
 
 	// fail on exhausted retries
@@ -72,6 +75,6 @@ func (dB *DB) connect() {
 
 	// attach db and models to struct
 	dB.client = db
-	users.db = db
-	dB.users = users
+	dB.users = &Users{db}
+
 }

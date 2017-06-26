@@ -15,6 +15,9 @@ type Users struct {
 	db *gorm.DB
 }
 
+// create a user in the db
 func (u Users) create(f string, l string) {
+
 	u.db.Create(&User{First: f, Last: l})
+
 }

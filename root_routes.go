@@ -13,10 +13,14 @@ type rootRoutes struct {
 
 // mappings
 func (r rootRoutes) init() {
+
 	r.get("/", r.getRoot)
+
 }
 
 // handlers
 func (r rootRoutes) getRoot(c echo.Context) error {
+
 	return c.String(200, "this is the root route")
+
 }

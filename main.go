@@ -5,6 +5,7 @@ import (
 )
 
 func main() {
+
 	e := echo.New()
 	db := DB{}
 
@@ -19,4 +20,5 @@ func main() {
 
 	e.Logger.Fatal(e.Start(":7447"))
 	defer db.client.Close()
+
 }
