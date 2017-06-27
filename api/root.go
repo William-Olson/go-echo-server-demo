@@ -4,17 +4,14 @@ import (
 	"github.com/labstack/echo"
 )
 
-// ------------ root routes --------------
-
-// definition
 type rootRoutes struct {
 	route
 }
 
 // mappings
-func (r rootRoutes) init() {
+func (r rootRoutes) mount() {
 
-	r.get("/", r.getRoot)
+	r.group.GET("/", r.getRoot)
 
 }
 

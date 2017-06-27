@@ -9,11 +9,11 @@ type userRoutes struct {
 }
 
 // mappings
-func (ur userRoutes) init() {
+func (ur userRoutes) mount() {
 
-	ur.get("/:id/details", ur.getRoot)
-	ur.get("/:id", ur.userByIdRoute)
-	ur.post("/", ur.createUser)
+	ur.group.GET("/:id/details", ur.getRoot)
+	ur.group.GET("/:id", ur.userByIdRoute)
+	ur.group.POST("/", ur.createUser)
 
 }
 
