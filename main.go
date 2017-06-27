@@ -1,24 +1,14 @@
 package main
 
-import (
-	"github.com/labstack/echo"
-)
-
 func main() {
 
-	e := echo.New()
 	db := DB{}
+	server := Server{db: &db}
 
-	// db setup
-	db.connect()
-	db.sync()
-	db.addTestData()
+	// setup
+	db.start()
+	server.start()
 
-	// route setup
-	mountRoutes(rootRoutes{route{"/", e, &db}})
-	mountRoutes(userRoutes{route{"/users", e, &db}})
-
-	e.Logger.Fatal(e.Start(":7447"))
 	defer db.client.Close()
 
 }

@@ -21,7 +21,18 @@ type DB struct {
 	users  *Users
 }
 
-func (dB DB) sync() {
+func (dB *DB) start() {
+
+	dB.connect()
+	dB.sync()
+	dB.addTestData()
+
+}
+
+func (dB *DB) sync() {
+
+	// attach models
+	dB.users = &Users{dB.client}
 
 	// sync schema
 	dB.client.AutoMigrate(&User{})
@@ -73,8 +84,7 @@ func (dB *DB) connect() {
 		panic("Could not connect to db")
 	}
 
-	// attach db and models to struct
+	// attach db to struct
 	dB.client = db
-	dB.users = &Users{db}
 
 }

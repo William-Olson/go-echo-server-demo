@@ -6,9 +6,9 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	First string `gorm:"text"`
-	Last  string `gorm:"text"`
+	ID    uint   `gorm:"primary_key" json:"id"`
+	First string `gorm:"text" json:"first"`
+	Last  string `gorm:"text" json:"last"`
 }
 
 type Users struct {
