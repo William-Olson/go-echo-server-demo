@@ -1,7 +1,8 @@
-package main
+package api
 
 import (
 	"github.com/labstack/echo"
+	"models"
 	"regexp"
 )
 
@@ -13,7 +14,7 @@ type someRoutes interface {
 type route struct {
 	base string
 	echo *echo.Echo
-	db   *DB
+	db   *models.DB
 }
 
 // call the init method of someRoutes the init method should wire up the

@@ -1,4 +1,4 @@
-package main
+package models
 
 import (
 	"github.com/jinzhu/gorm"
@@ -11,12 +11,12 @@ type User struct {
 	Last  string `gorm:"text" json:"last"`
 }
 
-type Users struct {
+type UsersApi struct {
 	db *gorm.DB
 }
 
 // create a user in the db
-func (u Users) create(f string, l string) {
+func (u UsersApi) Create(f string, l string) {
 
 	u.db.Create(&User{First: f, Last: l})
 

@@ -1,4 +1,4 @@
-package main
+package models
 
 import (
 	"fmt"
@@ -10,18 +10,18 @@ import (
 )
 
 const (
-	dbDriver           = "postgres"
-	dbOpts             = "host=db user=postgres dbname=postgres sslmode=disable password=postgres"
-	DB_CONNECT_RETRIES = 10
-	RETRY_FACTOR       = 1.7
+	dbDriver    = "postgres"
+	dbOpts      = "host=db user=postgres dbname=postgres sslmode=disable password=postgres"
+	maxRetries  = 10
+	retryFactor = 1.7
 )
 
 type DB struct {
-	client *gorm.DB
-	users  *Users
+	Client *gorm.DB
+	Users  *UsersApi
 }
 
-func (dB *DB) start() {
+func (dB *DB) Start() {
 
 	dB.connect()
 	dB.sync()
@@ -32,17 +32,17 @@ func (dB *DB) start() {
 func (dB *DB) sync() {
 
 	// attach models
-	dB.users = &Users{dB.client}
+	dB.Users = &UsersApi{dB.Client}
 
 	// sync schema
-	dB.client.AutoMigrate(&User{})
+	dB.Client.AutoMigrate(&User{})
 
 }
 
 func (dB DB) addTestData() {
 
 	// test data creation
-	dB.users.create("testFirst", "testLast")
+	dB.Users.Create("testFirst", "testLast")
 
 }
 
@@ -55,8 +55,8 @@ func (dB *DB) connect() {
 	err := try.Do(func(attempt int) (bool, error) {
 
 		var err error
-		shouldRetry := attempt <= DB_CONNECT_RETRIES
-		timeout := time.Second * time.Duration(math.Pow(RETRY_FACTOR, float64(attempt)))
+		shouldRetry := attempt <= maxRetries
+		timeout := time.Second * time.Duration(math.Pow(retryFactor, float64(attempt)))
 
 		// connect
 		fmt.Printf("db connection attempt: %v\n", attempt)
@@ -85,6 +85,6 @@ func (dB *DB) connect() {
 	}
 
 	// attach db to struct
-	dB.client = db
+	dB.Client = db
 
 }
