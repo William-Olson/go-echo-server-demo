@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/labstack/echo"
+	"strconv"
 )
 
 type userRoutes struct {
@@ -11,23 +12,30 @@ type userRoutes struct {
 // mappings
 func (ur userRoutes) mount() {
 
-	ur.group.GET("/:id/details", ur.getRoot)
-	ur.group.GET("/:id", ur.userByIdRoute)
+	ur.group.GET("/:id", ur.getUser)
+	ur.group.GET("/", ur.getAll)
 	ur.group.POST("/", ur.createUser)
 
 }
 
 // handlers
-func (u userRoutes) getRoot(c echo.Context) error {
+func (u userRoutes) getUser(c echo.Context) error {
 
-	str := "details for user " + c.Param("id")
-	return c.String(200, str)
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+
+	if err != nil {
+		return err
+	}
+
+	user := u.db.Users.ById(uint(id))
+
+	return c.JSON(200, user)
 
 }
 
-func (u userRoutes) userByIdRoute(c echo.Context) error {
+func (u userRoutes) getAll(c echo.Context) error {
 
-	return c.String(200, "fetching user with id: "+c.Param("id"))
+	return c.JSON(200, u.db.Users.GetAll())
 
 }
 

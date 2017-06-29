@@ -21,3 +21,19 @@ func (u UsersApi) Create(f string, l string) {
 	u.db.Create(&User{First: f, Last: l})
 
 }
+
+func (u UsersApi) ById(id uint) User {
+
+	var user User
+	u.db.Find(&user, id)
+	return user
+
+}
+
+func (u UsersApi) GetAll() []User {
+
+	var users []User
+	u.db.Find(&users)
+	return users
+
+}
