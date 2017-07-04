@@ -6,9 +6,10 @@ import (
 )
 
 type User struct {
-	ID    uint   `gorm:"primary_key" json:"id"`
-	First string `gorm:"text" json:"first"`
-	Last  string `gorm:"text" json:"last"`
+	ID       uint   `gorm:"primary_key" json:"id"`
+	First    string `gorm:"text" json:"first"`
+	Last     string `gorm:"text" json:"last"`
+	Password string `gorm:"text" json:"-"`
 }
 
 type UsersApi struct {
@@ -16,9 +17,9 @@ type UsersApi struct {
 }
 
 // create a user in the db
-func (u UsersApi) Create(f string, l string) {
+func (u UsersApi) Create(f string, l string, p string) {
 
-	u.db.Create(&User{First: f, Last: l})
+	u.db.Create(&User{First: f, Last: l, Password: p})
 
 }
 

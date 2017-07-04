@@ -42,7 +42,7 @@ func (dB *DB) sync() {
 func (dB DB) addTestData() {
 
 	// test data creation
-	dB.Users.Create("testFirst", "testLast")
+	dB.Users.Create("testFirst", "testLast", "testPassword")
 
 }
 

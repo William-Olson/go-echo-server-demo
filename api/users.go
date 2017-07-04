@@ -43,8 +43,9 @@ func (u userRoutes) createUser(c echo.Context) error {
 
 	first := c.FormValue("first")
 	last := c.FormValue("last")
+	pw := c.FormValue("password")
 
-	u.db.Users.Create(first, last)
+	u.db.Users.Create(first, last, pw)
 
 	return c.String(200, "Ok")
 
