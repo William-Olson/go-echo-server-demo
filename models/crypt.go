@@ -8,10 +8,22 @@ type crypt struct {
 	cost int
 }
 
+/*
+
+	Get a new crypt struct for encryption and checking
+
+*/
 func newCrypt() *crypt {
+
 	return &crypt{cost: bcrypt.DefaultCost}
+
 }
 
+/*
+
+	Encrypt a string
+
+*/
 func (c crypt) hash(s string) (string, error) {
 
 	h, err := bcrypt.GenerateFromPassword([]byte(s), c.cost)
@@ -24,6 +36,11 @@ func (c crypt) hash(s string) (string, error) {
 
 }
 
+/*
+
+	Check if a string matches an encrypted hash value
+
+*/
 func (c crypt) check(s string, h string) bool {
 
 	err := bcrypt.CompareHashAndPassword([]byte(h), []byte(s))
