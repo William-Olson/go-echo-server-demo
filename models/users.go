@@ -19,7 +19,9 @@ type UsersApi struct {
 // create a user in the db
 func (u UsersApi) Create(f string, l string, p string) {
 
-	u.db.Create(&User{First: f, Last: l, Password: p})
+	c := newCrypt()
+	pw, _ := c.hash(p)
+	u.db.Create(&User{First: f, Last: l, Password: pw})
 
 }
 
