@@ -4,11 +4,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"models"
-)
-
-const (
-	jwtSecret  = "verygoodsecret"
-	serverPort = "7447"
+	"utils"
 )
 
 type Server struct {
@@ -25,10 +21,6 @@ type route struct {
 	db    *models.DB
 }
 
-type pmap struct {
-	payload map[string](interface{})
-}
-
 /*
 
 	Init routes and start the server
@@ -37,6 +29,10 @@ type pmap struct {
 func (s *Server) Start() {
 
 	s.e = echo.New()
+
+	// get config params
+	port := utils.GetEnv("APP_PORT")
+	jwtSecret := utils.GetEnv("JWT_SECRET")
 
 	// some general middleware
 	s.e.Use(middleware.Logger())
@@ -60,26 +56,6 @@ func (s *Server) Start() {
 		r.mount()
 	}
 
-	s.e.Logger.Fatal(s.e.Start(":" + serverPort))
-
-}
-
-/*
-
-	Response payload helpers
-
-*/
-
-func newResponse(s string, v interface{}) pmap {
-
-	payload := pmap{(map[string](interface{}){})}
-	payload.payload[s] = v
-	return payload
-
-}
-
-func (p *pmap) set(s string, v interface{}) {
-
-	p.payload[s] = v
+	s.e.Logger.Fatal(s.e.Start(":" + port))
 
 }

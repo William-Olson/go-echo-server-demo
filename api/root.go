@@ -4,6 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"time"
+	"utils"
 )
 
 type rootRoutes struct {
@@ -40,6 +41,8 @@ func (r rootRoutes) getRoot(c echo.Context) error {
 */
 func (r rootRoutes) login(c echo.Context) error {
 
+	jwtSecret := utils.GetEnv("JWT_SECRET")
+
 	un := c.FormValue("username")
 	pw := c.FormValue("password")
 
@@ -67,9 +70,9 @@ func (r rootRoutes) login(c echo.Context) error {
 	}
 
 	// attach token value to response
-	resp := newResponse("ok", true)
-	resp.set("token", t)
+	resp := utils.NewResponse("ok", true)
+	resp.Set("token", t)
 
-	return c.JSON(200, resp.payload)
+	return c.JSON(200, resp.Payload)
 
 }

@@ -11,6 +11,7 @@ RUN go-wrapper download -u github.com/labstack/echo/... && \
 
 COPY . /go/src/
 
+RUN go-wrapper install ./utils
 RUN go-wrapper install ./models
 RUN go-wrapper install ./api
 RUN go-wrapper install ./app

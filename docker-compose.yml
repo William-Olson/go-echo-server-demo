@@ -1,9 +1,11 @@
 server:
   image: willko/go-echo-server-demo:latest
   ports:
-    - 7447:7447
+    - 3000:3000
   links:
     - db
+  environment:
+    - APP_PORT=3000
 db:
   environment:
     - POSTGRES_DB=postgres

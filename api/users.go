@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/labstack/echo"
-	"strconv"
+	"utils"
 )
 
 type userRoutes struct {
@@ -29,13 +29,13 @@ func (ur userRoutes) mount() {
 */
 func (u userRoutes) getUser(c echo.Context) error {
 
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := utils.ConvertId(c.Param("id"))
 
 	if err != nil {
 		return err
 	}
 
-	user := u.db.Users.ById(uint(id))
+	user := u.db.Users.ById(id)
 
 	return c.JSON(200, user)
 
@@ -65,8 +65,8 @@ func (u userRoutes) createUser(c echo.Context) error {
 	pw := c.FormValue("password")
 
 	u.db.Users.Create(username, first, last, pw)
-	resp := newResponse("ok", true)
+	resp := utils.NewResponse("ok", true)
 
-	return c.JSON(200, resp.payload)
+	return c.JSON(200, resp.Payload)
 
 }
