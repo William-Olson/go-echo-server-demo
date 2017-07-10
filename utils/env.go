@@ -10,6 +10,7 @@ import (
 
 */
 func GetEnv(k string) string {
+
 	env := os.Getenv(k)
 
 	// default fallbacks
@@ -25,4 +26,5 @@ func GetEnv(k string) string {
 	}
 
 	return env
+
 }
