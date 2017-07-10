@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"strconv"
 )
 
@@ -10,11 +9,12 @@ type userRoutes struct {
 	route
 }
 
-// mappings
-func (ur userRoutes) mount() {
+/*
 
-	// use auth middleware
-	ur.group.Use(middleware.JWT([]byte(jwtSecret)))
+	Map users routes
+
+*/
+func (ur userRoutes) mount() {
 
 	ur.group.GET("/:id", ur.getUser)
 	ur.group.GET("/", ur.getAll)
@@ -22,7 +22,11 @@ func (ur userRoutes) mount() {
 
 }
 
-// handlers
+/*
+
+	Fetch a user by id
+
+*/
 func (u userRoutes) getUser(c echo.Context) error {
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
@@ -37,12 +41,22 @@ func (u userRoutes) getUser(c echo.Context) error {
 
 }
 
+/*
+
+	Fetch all users
+
+*/
 func (u userRoutes) getAll(c echo.Context) error {
 
 	return c.JSON(200, u.db.Users.GetAll())
 
 }
 
+/*
+
+	Create a user
+
+*/
 func (u userRoutes) createUser(c echo.Context) error {
 
 	username := c.FormValue("username")
@@ -51,7 +65,8 @@ func (u userRoutes) createUser(c echo.Context) error {
 	pw := c.FormValue("password")
 
 	u.db.Users.Create(username, first, last, pw)
+	resp := newResponse("ok", true)
 
-	return c.String(200, "Ok")
+	return c.JSON(200, resp.payload)
 
 }

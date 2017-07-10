@@ -10,7 +10,11 @@ type rootRoutes struct {
 	route
 }
 
-// mappings
+/*
+
+	Map root routes
+
+*/
 func (r rootRoutes) mount() {
 
 	r.group.GET("/", r.getRoot)
@@ -18,13 +22,22 @@ func (r rootRoutes) mount() {
 
 }
 
-// handlers
+/*
+
+	Serve the root route
+
+*/
 func (r rootRoutes) getRoot(c echo.Context) error {
 
 	return c.String(200, "this is the root route")
 
 }
 
+/*
+
+	Login with username / password and get an auth token
+
+*/
 func (r rootRoutes) login(c echo.Context) error {
 
 	un := c.FormValue("username")
@@ -53,9 +66,10 @@ func (r rootRoutes) login(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(200, map[string]string{
-		"token": t,
-		"ok":    "true",
-	})
+	// attach token value to response
+	resp := newResponse("ok", true)
+	resp.set("token", t)
+
+	return c.JSON(200, resp.payload)
 
 }
