@@ -2,8 +2,11 @@ package api
 
 import (
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"models"
 )
+
+const jwtSecret = "verygoodsecret"
 
 type Server struct {
 	Db *models.DB
@@ -27,6 +30,10 @@ type route struct {
 func (s *Server) Start() {
 
 	s.e = echo.New()
+
+	// some general middleware
+	s.e.Use(middleware.Logger())
+	s.e.Use(middleware.Recover())
 
 	// define base paths
 	routes := []someRoutes{
