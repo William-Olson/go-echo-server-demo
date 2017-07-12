@@ -7,11 +7,12 @@ import (
 )
 
 type User struct {
-	ID       uint   `gorm:"primary_key" json:"id"`
-	Username string `gorm:"text;not null;unique" json:"username"`
-	First    string `gorm:"text" json:"first"`
-	Last     string `gorm:"text" json:"last"`
-	Password string `gorm:"text" json:"-"`
+	ID       uint      `gorm:"primary_key" json:"id"`
+	Username string    `gorm:"text;not null;unique" json:"username"`
+	First    string    `gorm:"text" json:"first"`
+	Last     string    `gorm:"text" json:"last"`
+	Password string    `gorm:"text" json:"-"`
+	Sessions []Session `gorm:"ForeignKey:UserID" json:"sessions"`
 }
 
 type UsersApi struct {

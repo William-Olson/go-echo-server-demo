@@ -17,8 +17,9 @@ const (
 )
 
 type DB struct {
-	Client *gorm.DB
-	Users  *UsersApi
+	Client   *gorm.DB
+	Users    *UsersApi
+	Sessions *SessionsApi
 }
 
 func (dB *DB) Start() {
@@ -31,11 +32,25 @@ func (dB *DB) Start() {
 
 func (dB *DB) sync() {
 
+	// wire up migration helper
+	migrations := migrationsApi{db: dB.Client}
+	migrations.loadQueue()
+
 	// attach models
 	dB.Users = &UsersApi{dB.Client}
+	dB.Sessions = &SessionsApi{dB.Client}
 
 	// sync schema
+	dB.Client.AutoMigrate(&Migration{})
 	dB.Client.AutoMigrate(&User{})
+	dB.Client.AutoMigrate(&Session{})
+
+	// run migrations
+	err := migrations.run()
+
+	if err != nil {
+		panic(err)
+	}
 
 }
 
