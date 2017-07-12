@@ -2,8 +2,6 @@ package models
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"time"
 )
 
@@ -14,26 +12,15 @@ type Migration struct {
 }
 
 type migrater interface {
-	up(*gorm.DB) error
+	up(*DB) error
 	getName() string
 }
 
 type migrationsApi struct {
 	count   uint
 	pending uint
-	db      *gorm.DB
+	db      *DB
 	migs    map[string]migrater
-}
-
-/*
-
-	Use a special name for migrations table
-
-*/
-func (mig Migration) TableName() string {
-
-	return "$migrations"
-
 }
 
 /*
@@ -48,6 +35,7 @@ func (migApi *migrationsApi) loadQueue() {
 
 	// queue up migrations
 	migApi.register(sessionForeignKey{})
+	migApi.register(addTestData{})
 
 }
 
@@ -77,7 +65,7 @@ func (migApi *migrationsApi) run() error {
 
 		// attempt to find already run migration
 		migModel := Migration{Name: name}
-		migApi.db.Find(&migModel)
+		migApi.db.Client.Find(&migModel)
 
 		// mark as pending if not found
 		if migModel.Done == false {
@@ -87,14 +75,14 @@ func (migApi *migrationsApi) run() error {
 
 	}
 
-	fmt.Printf("Total Migrations Found: %d\n", migApi.count)
-	fmt.Printf("%d of which are Pending Migrations\n", migApi.pending)
+	fmt.Printf("Total Migrations Found: %d ", migApi.count)
+	fmt.Printf("(%d of which are Pending Migrations)\n", migApi.pending)
 
 	// run pending migrations
 	for name, mig := range toRun {
 
 		// log which migration is executing
-		fmt.Printf("Running Migration: %s", name)
+		fmt.Printf("Running Migration: %s\n", name)
 
 		// run it
 		err := mig.up(migApi.db)
@@ -105,7 +93,7 @@ func (migApi *migrationsApi) run() error {
 		}
 
 		// save migration status if successful
-		migApi.db.Create(&Migration{
+		migApi.db.Client.Create(&Migration{
 			Name:      name,
 			Done:      true,
 			CreatedAt: time.Now(),
@@ -113,5 +101,16 @@ func (migApi *migrationsApi) run() error {
 	}
 
 	return nil
+
+}
+
+/*
+
+	Use a special name for migrations table
+
+*/
+func (mig Migration) TableName() string {
+
+	return "$migrations"
 
 }

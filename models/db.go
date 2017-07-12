@@ -26,14 +26,13 @@ func (dB *DB) Start() {
 
 	dB.connect()
 	dB.sync()
-	dB.addTestData()
 
 }
 
 func (dB *DB) sync() {
 
 	// wire up migration helper
-	migrations := migrationsApi{db: dB.Client}
+	migrations := migrationsApi{db: dB}
 	migrations.loadQueue()
 
 	// attach models
@@ -51,13 +50,6 @@ func (dB *DB) sync() {
 	if err != nil {
 		panic(err)
 	}
-
-}
-
-func (dB DB) addTestData() {
-
-	// test data creation
-	dB.Users.Create("admin", "testFirst", "testLast", "testPassword")
 
 }
 
