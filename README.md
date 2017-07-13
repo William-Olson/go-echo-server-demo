@@ -11,3 +11,10 @@ Simple go server using [echo](https://echo.labstack.com/) and [gorm](http://jinz
 make
 ```
 
+
+## Doc links
+
+  - [api](http://godoc.org/github.com/William-Olson/go-echo-server-demo/api)
+  - [models](http://godoc.org/github.com/William-Olson/go-echo-server-demo/models)
+  - [utils](http://godoc.org/github.com/William-Olson/go-echo-server-demo/utils)
+
