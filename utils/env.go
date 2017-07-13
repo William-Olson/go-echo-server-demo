@@ -4,11 +4,7 @@ import (
 	"os"
 )
 
-/*
-
-	Get an environment variable or its default value
-
-*/
+// GetEnv : get an environment variable or its default value
 func GetEnv(k string) string {
 
 	env := os.Getenv(k)

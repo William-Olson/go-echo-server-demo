@@ -7,6 +7,7 @@ import (
 	"utils"
 )
 
+// Server : the echo server manager
 type Server struct {
 	Db *models.DB
 	e  *echo.Echo
@@ -21,11 +22,7 @@ type route struct {
 	db    *models.DB
 }
 
-/*
-
-	Init routes and start the server
-
-*/
+// Start : init routes and start the server
 func (s *Server) Start() {
 
 	s.e = echo.New()

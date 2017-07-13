@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/postgres" // required for gorm
 	"gopkg.in/matryer/try.v1"
 	"math"
 	"time"
@@ -16,12 +16,14 @@ const (
 	retryFactor = 1.7
 )
 
+// DB : The db dependency
 type DB struct {
 	Client   *gorm.DB
-	Users    *UsersApi
-	Sessions *SessionsApi
+	Users    *UsersAPI
+	Sessions *SessionsAPI
 }
 
+// Start : connect the db client, sync models, and run migrations
 func (dB *DB) Start() {
 
 	dB.connect()
@@ -29,15 +31,20 @@ func (dB *DB) Start() {
 
 }
 
+/*
+
+	Add missing fields to tables & migrate the db
+
+*/
 func (dB *DB) sync() {
 
 	// wire up migration helper
-	migrations := migrationsApi{db: dB}
+	migrations := migrationsAPI{db: dB}
 	migrations.loadQueue()
 
 	// attach models
-	dB.Users = &UsersApi{dB.Client}
-	dB.Sessions = &SessionsApi{dB.Client}
+	dB.Users = &UsersAPI{dB.Client}
+	dB.Sessions = &SessionsAPI{dB.Client}
 
 	// sync schema
 	dB.Client.AutoMigrate(&Migration{})
@@ -53,6 +60,11 @@ func (dB *DB) sync() {
 
 }
 
+/*
+
+	Establish a db client connection
+
+*/
 func (dB *DB) connect() {
 
 	var db *gorm.DB

@@ -27,15 +27,15 @@ func (ur userRoutes) mount() {
 	Fetch a user by id
 
 */
-func (u userRoutes) getUser(c echo.Context) error {
+func (ur userRoutes) getUser(c echo.Context) error {
 
-	id, err := utils.ConvertId(c.Param("id"))
+	id, err := utils.ConvertID(c.Param("id"))
 
 	if err != nil {
 		return err
 	}
 
-	user := u.db.Users.ById(id)
+	user := ur.db.Users.ByID(id)
 
 	return c.JSON(200, user)
 
@@ -46,9 +46,9 @@ func (u userRoutes) getUser(c echo.Context) error {
 	Fetch all users
 
 */
-func (u userRoutes) getAll(c echo.Context) error {
+func (ur userRoutes) getAll(c echo.Context) error {
 
-	return c.JSON(200, u.db.Users.GetAll())
+	return c.JSON(200, ur.db.Users.GetAll())
 
 }
 
@@ -57,14 +57,14 @@ func (u userRoutes) getAll(c echo.Context) error {
 	Create a user
 
 */
-func (u userRoutes) createUser(c echo.Context) error {
+func (ur userRoutes) createUser(c echo.Context) error {
 
 	username := c.FormValue("username")
 	first := c.FormValue("first")
 	last := c.FormValue("last")
 	pw := c.FormValue("password")
 
-	u.db.Users.Create(username, first, last, pw)
+	ur.db.Users.Create(username, first, last, pw)
 	resp := utils.NewResponse("ok", true)
 
 	return c.JSON(200, resp.Payload)

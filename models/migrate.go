@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Migration : model for tracking migrations in db
 type Migration struct {
 	Name      string `gorm:"text;primary_key;" json:"name"`
 	Done      bool   `sql:"DEFAULT:false"`
@@ -16,7 +17,7 @@ type migrater interface {
 	getName() string
 }
 
-type migrationsApi struct {
+type migrationsAPI struct {
 	count   uint
 	pending uint
 	db      *DB
@@ -28,7 +29,7 @@ type migrationsApi struct {
 	Init the migration queue to be ran
 
 */
-func (migApi *migrationsApi) loadQueue() {
+func (migApi *migrationsAPI) loadQueue() {
 
 	// init migs map
 	migApi.migs = make(map[string]migrater)
@@ -44,7 +45,7 @@ func (migApi *migrationsApi) loadQueue() {
 	Queue up a migration to be checked and executed
 
 */
-func (migApi *migrationsApi) register(mig migrater) {
+func (migApi *migrationsAPI) register(mig migrater) {
 
 	migApi.migs[mig.getName()] = mig
 
@@ -55,7 +56,7 @@ func (migApi *migrationsApi) register(mig migrater) {
 	Execute Migrations
 
 */
-func (migApi *migrationsApi) run() error {
+func (migApi *migrationsAPI) run() error {
 
 	toRun := map[string]migrater{}
 
@@ -104,11 +105,7 @@ func (migApi *migrationsApi) run() error {
 
 }
 
-/*
-
-	Use a special name for migrations table
-
-*/
+// TableName : use a special name for migrations table
 func (mig Migration) TableName() string {
 
 	return "$migrations"

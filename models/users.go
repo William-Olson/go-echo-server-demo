@@ -3,9 +3,10 @@ package models
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/postgres" // for gorm
 )
 
+// User : model for app users
 type User struct {
 	ID       uint      `gorm:"primary_key" json:"id"`
 	Username string    `gorm:"text;not null;unique" json:"username"`
@@ -15,12 +16,13 @@ type User struct {
 	Sessions []Session `gorm:"ForeignKey:UserID" json:"sessions"`
 }
 
-type UsersApi struct {
+// UsersAPI : used for interacting with user models
+type UsersAPI struct {
 	db *gorm.DB
 }
 
-// create a user in the db
-func (u UsersApi) Create(un string, f string, l string, p string) {
+// Create : create a user in the db
+func (u UsersAPI) Create(un string, f string, l string, p string) {
 
 	c := newCrypt()
 	pw, _ := c.hash(p)
@@ -33,7 +35,8 @@ func (u UsersApi) Create(un string, f string, l string, p string) {
 
 }
 
-func (u UsersApi) ById(id uint) User {
+// ByID : get a user by its id
+func (u UsersAPI) ByID(id uint) User {
 
 	var user User
 	u.db.Find(&user, id)
@@ -41,7 +44,8 @@ func (u UsersApi) ById(id uint) User {
 
 }
 
-func (u UsersApi) GetAll() []User {
+// GetAll : get all current users in db
+func (u UsersAPI) GetAll() []User {
 
 	var users []User
 	u.db.Find(&users)
@@ -49,7 +53,8 @@ func (u UsersApi) GetAll() []User {
 
 }
 
-func (u UsersApi) Login(un string, pw string) (User, error) {
+// Login : attempt to login a user or error if login failed
+func (u UsersAPI) Login(un string, pw string) (User, error) {
 
 	c := newCrypt()
 	var user User

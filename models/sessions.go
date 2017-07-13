@@ -2,10 +2,11 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/postgres" // for gorm
 	"time"
 )
 
+// Session : for user sessions
 type Session struct {
 	Token        string    `gorm:"primary_key;text" json:"token"`
 	UserID       uint      `gorm:"not null" json:"user_id"`
@@ -13,12 +14,13 @@ type Session struct {
 	LastActivity time.Time `json:"last_activity"`
 }
 
-type SessionsApi struct {
+// SessionsAPI : for interacting with session models
+type SessionsAPI struct {
 	db *gorm.DB
 }
 
-// create a user in the db
-func (sesh SessionsApi) Create(user User, token, client string) {
+// Create : create a user session in the db
+func (sesh SessionsAPI) Create(user User, token, client string) {
 
 	sesh.db.Create(&Session{
 		UserID:       user.ID,
@@ -29,7 +31,8 @@ func (sesh SessionsApi) Create(user User, token, client string) {
 
 }
 
-func (sesh SessionsApi) ByToken(token uint) Session {
+// ByToken : get a session by its token
+func (sesh SessionsAPI) ByToken(token uint) Session {
 
 	var session Session
 	sesh.db.Find(&session, token)
@@ -37,7 +40,8 @@ func (sesh SessionsApi) ByToken(token uint) Session {
 
 }
 
-func (sesh SessionsApi) Activity(s *Session) {
+// Activity : update a sessions last_activity
+func (sesh SessionsAPI) Activity(s *Session) {
 
 	sesh.db.Update(&s, "last_activity", time.Now())
 
